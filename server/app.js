@@ -1,6 +1,7 @@
 const express = require('express');
 const { default: mongoose } = require('mongoose');
 const jwt = require('jsonwebtoken');
+const cors = require('cors');
 const dotenv = require('dotenv');
 dotenv.config({path: './.env'});
 const registerRoute = require('./router/register');
@@ -17,6 +18,7 @@ mongoose.connect(url)
 
 const app = express();
 app.use(express.json());
+app.use(cors())
 
 app.use('/v1/books', (req, res, next) => {
     const token = req.headers.authorization;

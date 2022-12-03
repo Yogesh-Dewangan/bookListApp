@@ -43,10 +43,11 @@ router.post('/',
                     })
                 }
                 if (hash) {
-                    user = await User.create({
-                        userName,
-                        password: hash
-                    })
+                    // user = await User.create({
+                    //     userName,
+                    //     password: hash
+                    // })
+                    console.log(req.body);
 
                     return res.status(201).json({
                         status: "Success",
