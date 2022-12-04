@@ -1,7 +1,6 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { body, validationResult } = require('express-validator');
 const User = require('../model/User')
 const secret = process.env.SECRET;
 let SESSIONID;
@@ -9,25 +8,15 @@ const router = express.Router();
 
 router.use(express.json());
 
-router.post('/',
-    body('userName').isEmail(),
-    body('password').isLength({ min: 6, max: 16 }),
-    async (req, res) => {
+router.post('/', async (req, res) => {
         try {
-            const errors = validationResult(req);
-            if (!errors.isEmpty()) {
-                return res.status(400).json({
-                    status: "Failed in validationResult",
-                    errors: errors.array()
-                })
-            }
+            const { username, password } = req.body;
 
-            const { userName, password } = req.body;
-
-            const user = await User.findOne({ userName: userName });
+            const user = await User.findOne({ username: username });
 
             if (!user) {
                 return res.status(400).json({
+                    status: "Failed",
                     message: 'User does not Exists'
                 })
             }
@@ -36,7 +25,7 @@ router.post('/',
                 if (err) {
                     return res.status(400).json({
                         status: "Error occured during pasword comparision",
-                        errors: err.message
+                        error: err.message
                     })
                 }
 
@@ -60,7 +49,7 @@ router.post('/',
         } catch (e) {
             return res.status(500).json({
                 status: "Error catched",
-                errors: e.message
+                error: e.message
             })
         }
 
