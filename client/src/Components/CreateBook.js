@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { addBook } from './apiUtils';
 
 export default function CreateBook() {
     const [book, setBook] = useState({
@@ -12,21 +13,9 @@ export default function CreateBook() {
     })
     const navigate = useNavigate();
 
-    const registerUser = async () => {
-        const res = await fetch('/v1/books', {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': localStorage.getItem('token') 
-            },
-            body: JSON.stringify(book)
-        })
-        return res.json();
-    }
-
     const submitHandler = (e) => {
         e.preventDefault();
-        registerUser()
+        addBook(book)
             .then(res => {
                 console.log(res);
                 navigate('/booklist');
