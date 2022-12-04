@@ -7,31 +7,31 @@ const router = express.Router();
 router.use(express.json());
 
 router.post('/',
-    body('userName').isEmail(),
+    body('username').isEmail(),
     body('password').isLength({ min: 6, max: 16 }),
-    body('cpassword').isLength({ min: 6, max: 16 }),
     async (req, res) => {
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
                 return res.status(400).json({
-                    status: "Failed in validationResult",
                     errors: errors.array()
                 })
             }
 
-            const { userName, password, cpassword } = req.body;
+            const { username, password, cpassword } = req.body;
 
-            let user = await User.findOne({ userName: userName });
+            let user = await User.findOne({ username: username });
 
             if (user) {
                 return res.status(400).json({
+                    status: "Failed",
                     message: 'User Already Exists'
                 })
             }
 
             if (password !== cpassword) {
                 return res.status(400).json({
+                    status: "Failed",
                     message: 'Password does not match'
                 })
             }
@@ -43,11 +43,11 @@ router.post('/',
                     })
                 }
                 if (hash) {
-                    // user = await User.create({
-                    //     userName,
-                    //     password: hash
-                    // })
-                    console.log(req.body);
+                    user = await User.create({
+                        username,
+                        password: hash
+                    })
+                    // console.log(req.body);
 
                     return res.status(201).json({
                         status: "Success",
@@ -57,8 +57,7 @@ router.post('/',
             })
         } catch (e) {
             return res.status(500).json({
-                status: "Error catched",
-                message: e.message
+                error: e.message
             })
         }
     })
