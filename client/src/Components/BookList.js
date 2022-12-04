@@ -1,27 +1,18 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { getBookList } from "./apiUtils";
+import bookCover from "./images/book-cover.png"
 
 
 export default function BookList() {
     const [bookList, setBookList] = useState([]);
     const navigate = useNavigate();
-    const url = 'http://localhost:5000';
-
-    const getBookList = async () => {
-        const res = await fetch(`${url}/v1/books`, {
-            method: 'GET',
-            methods: {
-                'Authorization': localStorage.getItem('token')
-            }
-        })
-        return res.json();
-    }
 
     useEffect(() => {
         getBookList()
             .then(res => {
-                console.log(res);
-                // setBookList()
+                // console.log(res.books);
+                setBookList(res.books);
             })
     }, [])
 
@@ -36,20 +27,20 @@ export default function BookList() {
                     }}
                 >Add New Book</button>
             </div>
-            {bookList ? bookList.map(book => {
-                <BookCard book={book} />
+            {bookList ? bookList.map((book, index) => {
+                return <BookCard book={book} />
             }) : ''}
         </div>
     </div>
 }
 
-export function BookCard(book) {
-    return <div className="card" style="width: 18rem;">
-        <img src="" class="card-img-top" alt="book" />
-        <div class="card-body">
-            <h5 class="card-title">{book.title}</h5>
-            <p class="card-text">{book.author}</p>
-            <p class="card-text">{book.description}</p>
+function BookCard({book}) {
+    return <div className="card border" style={{width: '300px'}}>
+        <img src={bookCover} className="card-img-top" alt="book" />
+        <div className="card-body">
+            <h5 className="card-title my-1">{book.title}</h5>
+            <p className="card-text my-1">{book.author}</p>
+            <p className="card-text my-1">{book.description}</p>
         </div>
     </div>
 }
